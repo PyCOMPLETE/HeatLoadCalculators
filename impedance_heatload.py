@@ -45,11 +45,16 @@ class HeatLoadCalculatorImpedance(object):
         Do not specify n_bunches explicitly and implicitly at the same time!
         """
         
+        
         if n_bunches is None:
             if not hasattr(ppb, '__iter__'):
                 raise ValueError('N_bunches has to be specified somehow!')
             else:
                 n_bunches = 1.
+        else:
+            if hasattr(ppb, '__iter__'):
+                raise ValueError('N_bunches should not be specified if a ppb array is provided!')
+
 
         rho_B0_T = self.copper_rho_Ohm_m(self.temperature_K) # 0.014 *1e-8 for 20 K
         
