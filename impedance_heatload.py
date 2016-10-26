@@ -74,7 +74,7 @@ class HeatLoadCalculatorImpedance(object):
             #For 20K!!!
             #rho_B_T = 2.4e-10 *(1.0048 + 0.0038*b_field*70.)
 
-        print rho_B_T
+        #print rho_B_T
         per_bunch_factor = ppb**2 * sigma_t**(-1.5)
 
         if hasattr(ppb, '__iter__') and len(ppb.shape) == 2:
@@ -124,102 +124,5 @@ class HeatLoadCalculatorImpedanceLHCArc(object):
                         
                 
 
-class HeatLoad_calculated_fill(object):
-    def __init__(self, dict_fill, heat_load_calculator, Dt_calc = 60.):
- 
-        """
-        Returns the half cell heat load for a fill dict, which has to consist of basic and bunchbybunch data
-        """
-        from LHCMeasurementTools.LHC_BCT import BCT
-        from LHCMeasurementTools.LHC_FBCT import FBCT
-        from LHCMeasurementTools.LHC_BQM import filled_buckets, blength
-        from LHCMeasurementTools.LHC_Heatloads import magnet_length
-        from LHCMeasurementTools.LHC_Energy import energy
-        
-        
-        self.heat_load_calculator = heat_load_calculator
- 
-        ene = energy(fill_dict, beam=1)
- 
-        # Different for both beams
-        self.heat_load_calculated_per_beam_Wm = {}
-        for beam_ctr in (1,2):
 
-            bct = BCT(fill_dict, beam=beam_ctr)
-            fbct = FBCT(fill_dict, beam_ctr)
-            bunch_length = blength(fill_dict, beam = beam_ctr)
-
-            
-            if beam_ctr == 1:
-                self.t_stamps = np.arange(bct.t_stamps[0], bct.t_stamps[-1], Dt_calc)
-                
-            ppb = []
-            energy_eV = []
-            sigma_t = []
-            
-            for tt in self.t_stamps:
-                fbct_trace = fbct.nearest_older_sample(tt)
-                fbct_trace *= bct.nearest_older_sample(tt)/np.sum(fbct_trace)
-                bl_trace = bunch_length.nearest_older_sample(tt)
-                
-                mask_no_bunch = bl_trace<1e-15
-                bl_trace[mask_no_bunch] = 1.
-                fbct_trace[mask_no_bunch] = 0.
-    
-                ppb.append(fbct_trace)
-                sigma_t.append(bl_trace/4)
-                energy_eV.append(ene.nearest_older_sample(tt)*1e9)
-                
-                
-                
-            ppb = np.array(ppb)
-            sigma_t = np.array(sigma_t)
-            energy_eV = np.array(energy_eV)
-            
-            self.heat_load_calculated_per_beam_Wm['beam_%d'%beam_ctr] = self.heat_load_calculator.calculate_P_Wm(ppb, sigma_t, energy_eV=energy_eV)
-        
-        self.heat_load_calculated_total = self.heat_load_calculated_per_beam_Wm['beam_1'] + self.heat_load_calculated_per_beam_Wm['beam_2']
-               
-            
-            
-if __name__=='__main__':
-    
-    #test
-    ppb_test = 1.15e11
-    sigma_t_test = 1e-9/4.
-    energy_eV_test=7000e9
-    n_bunches_test = 2808
-    
-    hl_calculator  = HeatLoadCalculatorImpedanceLHCArc()
-    hl_imped_dip = hl_calculator.calculate_P_Wm_dipole(ppb=ppb_test, sigma_t=sigma_t_test,  energy_eV=energy_eV_test, n_bunches=n_bunches_test)
-    print hl_imped_dip 
-    hl_imped_quad = hl_calculator.calculate_P_Wm_quad(ppb=ppb_test, sigma_t=sigma_t_test,  energy_eV=energy_eV_test, n_bunches=n_bunches_test)  
-    print hl_imped_quad 
-    hl_imped_drift = hl_calculator.calculate_P_Wm_drift(ppb=ppb_test, sigma_t=sigma_t_test,  energy_eV=energy_eV_test, n_bunches=n_bunches_test)
-    print hl_imped_drift
-    hl_imped_hcell = hl_calculator.calculate_P_Wm(ppb=ppb_test, sigma_t=sigma_t_test,  energy_eV=energy_eV_test, n_bunches=n_bunches_test)  
-    print hl_imped_hcell 
-    
-    
-    
-    import sys, os
-    BIN = os.path.expanduser("../")
-    sys.path.append(BIN)
-    
-    
-    from LHCMeasurementTools.TimberManager import parse_timber_file
-
-    filln = 5219
-
-    fill_dict = {}
-    fill_dict.update(parse_timber_file('../fill_basic_data_csvs/basic_data_fill_%d.csv' % filln, verbose=False))
-    fill_dict.update(parse_timber_file('../fill_bunchbybunch_data_csvs/bunchbybunch_data_fill_%d.csv' % filln, verbose=False))
-        
-    hl_imped_fill = HeatLoad_calculated_fill(fill_dict, hl_calculator)
-    
-    import pylab as pl
-    pl.close('all')
-    pl.plot(hl_imped_fill.t_stamps, hl_imped_fill.heat_load_calculated_per_beam_Wm['beam_1']*53., 'b')
-    pl.plot(hl_imped_fill.t_stamps, hl_imped_fill.heat_load_calculated_per_beam_Wm['beam_2']*53, 'r')
-
-    pl.show()
+  
