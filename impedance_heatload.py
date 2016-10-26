@@ -6,9 +6,7 @@ from scipy.special import gamma as gammafunc
 
 
 
-
-lhc_measurement_tools_path = os.path.dirname(os.path.realpath(__file__))
-default_rho_vs_T_file = lhc_measurement_tools_path + '/copper_rho_vs_T.txt'
+default_rho_vs_T_file =  os.path.dirname(os.path.realpath(__file__)) + '/copper_rho_vs_T.txt'
 
 lhc_circumference = 26658.883
 lhc_arc_chamb_radius = 18.4e-3 
@@ -48,7 +46,7 @@ class HeatLoadCalculatorImpedance(object):
         """
         
         if n_bunches is None:
-            if type(ppb) is float or type(ppb) is int:
+            if not hasattr(ppb, '__iter__'):
                 raise ValueError('N_bunches has to be specified somehow!')
             else:
                 n_bunches = 1.
