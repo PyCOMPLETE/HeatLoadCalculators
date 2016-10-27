@@ -8,8 +8,6 @@ import impedance_heatload as ihl
 import synchrotron_radiation_heatload as srhl 
 
 
-
-
 ppb_test = 1.15e11
 sigma_t_test = 1e-9/4.
 energy_eV_test=7000e9
