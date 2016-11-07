@@ -1,18 +1,18 @@
 import numpy as np
+from LHCMeasurementTools.LHC_BCT import BCT
+from LHCMeasurementTools.LHC_FBCT import FBCT
+from LHCMeasurementTools.LHC_BQM import filled_buckets, blength
+from LHCMeasurementTools.LHC_Heatloads import magnet_length
+from LHCMeasurementTools.LHC_Energy import energy
 
 
 
 class HeatLoad_calculated_fill(object):
-    def __init__(self, fill_dict, heat_load_calculator, Dt_calc = 60.):
+    def __init__(self, fill_dict, heat_load_calculator, Dt_calc = 60., fbct_dict=None, bct_dict=None, blength_dict=None):
  
         """
         Returns the half cell heat load for a fill dict, which has to consist of basic and bunchbybunch data
         """
-        from LHCMeasurementTools.LHC_BCT import BCT
-        from LHCMeasurementTools.LHC_FBCT import FBCT
-        from LHCMeasurementTools.LHC_BQM import filled_buckets, blength
-        from LHCMeasurementTools.LHC_Heatloads import magnet_length
-        from LHCMeasurementTools.LHC_Energy import energy
         
         
         self.heat_load_calculator = heat_load_calculator
@@ -23,9 +23,20 @@ class HeatLoad_calculated_fill(object):
         self.heat_load_calculated_per_beam_Wm = {}
         for beam_ctr in (1,2):
 
-            bct = BCT(fill_dict, beam=beam_ctr)
-            fbct = FBCT(fill_dict, beam_ctr)
-            bunch_length = blength(fill_dict, beam = beam_ctr)
+            if bct_dict is None:
+                bct = BCT(fill_dict, beam=beam_ctr)
+            else:
+                bct = bct_dict[beam_ctr]
+
+            if fbct_dict is None:
+                fbct = FBCT(fill_dict, beam_ctr)
+            else:
+                fbct = fbct_dict[beam_ctr]
+
+            if blength_dict is None:
+                bunch_length = blength(fill_dict, beam = beam_ctr)
+            else:
+                bunch_length = blength_dict[beam_ctr]
 
             
             if beam_ctr == 1:
