@@ -37,7 +37,10 @@ class HeatLoad_calculated_fill(object):
             
             for tt in self.t_stamps:
                 fbct_trace = fbct.nearest_older_sample(tt)
-                fbct_trace *= bct.nearest_older_sample(tt)/np.sum(fbct_trace)
+
+                summed = np.sum(fbct_trace)
+                if summed != 0.:
+                    fbct_trace *= bct.nearest_older_sample(tt)/summed
                 bl_trace = bunch_length.nearest_older_sample(tt)
                 
                 mask_no_bunch = bl_trace<1e-15
