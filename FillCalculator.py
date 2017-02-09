@@ -59,7 +59,7 @@ class HeatLoad_calculated_fill(object):
                 fbct_trace[mask_no_bunch] = 0.
     
                 ppb.append(fbct_trace)
-                sigma_t.append(bl_trace/4)
+                sigma_t.append(bl_trace/4.)
                 energy_eV.append(ene.nearest_older_sample(tt)*1e9)
                 
                 

@@ -125,7 +125,4 @@ class HeatLoadCalculatorImpedanceLHCArc(object):
                  self.calculate_P_Wm_quad(ppb, sigma_t, energy_eV, n_bunches)*3.1+\
                  self.calculate_P_Wm_drift(ppb, sigma_t, energy_eV, n_bunches)*7.)/53.
                         
-                
-
-
   
