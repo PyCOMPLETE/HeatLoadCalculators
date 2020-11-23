@@ -25,7 +25,7 @@ class HeatLoadCalculatorElectronCloud(object):
         
         mat_to_patch = self.matrix
         
-        for ii in xrange(len(mat_to_patch)):
+        for ii in range(len(mat_to_patch)):
             current_row = mat_to_patch[ii,:]
             mask_missing = (current_row==0)
             current_row[mask_missing] = np.interp(self.database.bl[mask_missing],

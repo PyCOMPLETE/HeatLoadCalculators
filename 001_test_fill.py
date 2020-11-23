@@ -5,24 +5,28 @@ sys.path.append(BIN)
 
 
 # Load fills
-from LHCMeasurementTools.TimberManager import parse_timber_file
+import LHCMeasurementTools.TimberManager as tm
 
-filln = 5219
+filln = 6740
 
 fill_dict = {}
-fill_dict.update(parse_timber_file('../fill_basic_data_csvs/basic_data_fill_%d.csv' % filln, verbose=False))
-fill_dict.update(parse_timber_file('../fill_bunchbybunch_data_csvs/bunchbybunch_data_fill_%d.csv' % filln, verbose=False))
+fill_dict.update(tm.CalsVariables_from_h5(
+    ('../../LHC_followup_download_scripts/fill_basic_data_h5s'
+    '/basic_data_fill_%d.h5' % filln)))
+fill_dict.update(tm.CalsVariables_from_h5(
+    ('../../LHC_followup_download_scripts/fill_bunchbybunch_data_h5s/'
+    'bunchbybunch_data_fill_%d.h5' % filln)))
 
 
 
 # Build heat load calculators
 import impedance_heatload as ihl
-import synchrotron_radiation_heatload as srhl 
+import synchrotron_radiation_heatload as srhl
 
 hli_calculator  = ihl.HeatLoadCalculatorImpedanceLHCArc()
 hlsr_calculator  = srhl.HeatLoadCalculatorSynchrotronRadiationLHCArc()
 
-# Use fill calculators
+# Use fill calculator
 import FillCalculator as fc
     
 hl_imped_fill = fc.HeatLoad_calculated_fill(fill_dict, hli_calculator)
